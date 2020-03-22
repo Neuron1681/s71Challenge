@@ -7,7 +7,7 @@ namespace s71Challenge
 {
     class QueueContainer
     {
-        Queue<string> queue = new Queue<string>(); // TODO explain that Queue<T> loses functions
+        Queue<string> queue = new Queue<string>();
 
         /// <summary>
         /// Pushes the given messages to the queue.
@@ -48,7 +48,6 @@ namespace s71Challenge
                 }
                 catch (Exception)
                 {
-                    // TODO explain in readme why exception over protection.
                     throw new Exception("The queue is not that big!");
                 }
             }
@@ -69,7 +68,7 @@ namespace s71Challenge
                 values.Add(queue.Dequeue());
             }
             confirm(values);
-            Thread.Sleep(waitDurationSeconds * 1000); // TOOD explain shortfall of omitting multithreading here.
+            Thread.Sleep(waitDurationSeconds * 1000);
             PushToFront(values);
             return values;
         }
@@ -102,7 +101,7 @@ namespace s71Challenge
             }
             foreach (string value in queue)
             {
-                newQueue.Enqueue(value); // TODO explain the problem with multithreading queue additions like this while also copying a new queue. Maybe would introduce a lock. Also explain why using a blockingcollection might be better here too.
+                newQueue.Enqueue(value);
             }
             queue = newQueue;
         }
@@ -113,9 +112,6 @@ namespace s71Challenge
         /// <param name="values"></param>
         public void confirm(List<string> values)
         {
-            // TODO explain that this felt like a replacement for a native c# function, but was meant to be implemented as a clojure function with augmented functionality. "This was an awkward function to fill in, I believe because this is in c#. What if my queue had duplicate values? What if I was multithreading and new values were put in as I was checking the deletes?"
-            // TODO explain that I would probably begin custom building a queue from the ground up that was accessible via static pointers to confirm that a value at a specific position was removed.
-            // TODO explain challenge of using c# queue instead of custom queue because a message cannot be deleted from the middle of a queue, making this method redundant. This method is also redundant because .DeQueue is garunteed to work inless the index position was incorrect.
             for (int i = 0; i < values.Count(); ++i)
             {
                 // Because this finction is built to be called directly 
@@ -132,7 +128,7 @@ namespace s71Challenge
                     }
                     else
                     {
-                        if (values[i] == queue.ElementAt(i)) // TODO explain challenges of multithreading regarding this check as well.
+                        if (values[i] == queue.ElementAt(i)) 
                         {
                             // Since a queue won't allow us to remove an element from a position that is not i = 0, we'll have to generate a new queue and omit the value.
                             Queue<string> newQueue = new Queue<string>();
