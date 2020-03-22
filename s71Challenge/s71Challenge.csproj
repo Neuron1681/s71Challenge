@@ -66,7 +66,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Queue.cs" />
+    <Compile Include="MySqlSender.cs" />
+    <Compile Include="QueueContainer.cs" />
     <Compile Include="Utility\AppConfigManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

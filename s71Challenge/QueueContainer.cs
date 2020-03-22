@@ -5,9 +5,9 @@ using System.Threading;
 
 namespace s71Challenge
 {
-    class Queue
+    class QueueContainer
     {
-        Queue<string> queue = new Queue<string>();
+        Queue<string> queue = new Queue<string>(); // TODO explain that Queue<T> loses functions
 
         /// <summary>
         /// Pushes the given messages to the queue.
@@ -16,20 +16,20 @@ namespace s71Challenge
         /// <returns>A list of booleans indicating whether or not each message was successfully added to the queue.</returns>
         public List<bool> Push(List<string> values)
         {
-            List<bool> wasAdded = new List<bool>();
-            foreach(var value in values)
+            List<bool> wasValueAdded = new List<bool>();
+            foreach (var value in values)
             {
                 try
                 {
                     queue.Enqueue(value);
-                    wasAdded.Add(true);
+                    wasValueAdded.Add(true);
                 }
                 catch (Exception)
                 {
-                    wasAdded.Add(false);
+                    wasValueAdded.Add(false);
                 }
             }
-            return wasAdded;
+            return wasValueAdded;
         }
 
         /// <summary>
@@ -68,18 +68,32 @@ namespace s71Challenge
             {
                 values.Add(queue.Dequeue());
             }
+            confirm(values);
             Thread.Sleep(waitDurationSeconds * 1000); // TOOD explain shortfall of omitting multithreading here.
             PushToFront(values);
             return values;
         }
 
-
+        /// <summary>
+        /// Returns one or many messages from the queue.
+        /// </summary>
+        /// <param name="numberOfValues"></param>
+        /// <returns></returns>
+        public List<string> Pop(int numberOfValues)
+        {
+            List<string> values = new List<string>();
+            for (int i = 0; i < numberOfValues; ++i)
+            {
+                values.Add(queue.Dequeue());
+            }
+            return values;
+        }
 
         /// <summary>
         /// Places values at the front of the queue
         /// </summary>
         /// <param name="values"></param>
-        public void PushToFront(List<string> values)
+        private void PushToFront(List<string> values)
         {
             Queue<string> newQueue = new Queue<string>();
             foreach (string value in values)
@@ -110,20 +124,29 @@ namespace s71Challenge
                 // to their previous position within the queue.
                 try
                 {
-                    if (values[i] == queue.ElementAt(i)) // TODO explain challenges of multithreading regarding this check as well.
+                    // We must handle the condition where the pop function reduced the queue size to less than that of the list of values being checked
+                    if (i > queue.Count() - 1)
                     {
-                        // Since a queue won't allow us to remove an element from a position that is not i = 0, we'll have to generate a new queue and omit the value.
-                        Queue<string> newQueue = new Queue<string>();
-                        for (int k = 0; k < queue.Count; ++k)
+                        // if we're accessing an element outside of the queue size, then (due to the fact that this is called after pop()), we can assume the element was removed.
+                        break;
+                    }
+                    else
+                    {
+                        if (values[i] == queue.ElementAt(i)) // TODO explain challenges of multithreading regarding this check as well.
                         {
-                            if (k == i)
-                                continue;
-                            newQueue.Enqueue(queue.ElementAt(k));
-                        }
-                        queue = newQueue;
+                            // Since a queue won't allow us to remove an element from a position that is not i = 0, we'll have to generate a new queue and omit the value.
+                            Queue<string> newQueue = new Queue<string>();
+                            for (int k = 0; k < queue.Count; ++k)
+                            {
+                                if (k == i)
+                                    continue;
+                                newQueue.Enqueue(queue.ElementAt(k));
+                            }
+                            queue = newQueue;
+                        } 
                     }
                 }
-                catch(IndexOutOfRangeException)
+                catch (IndexOutOfRangeException)
                 {
                     throw new Exception("Attempted to access an element outside the size of the queue!");
                 }

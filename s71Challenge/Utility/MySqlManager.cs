@@ -48,10 +48,10 @@ namespace s71Challenge
         /// <param name="inPassword"></param>
         public void SetConnectionString(string inServer, string inDatabase, string inUsername, string inPassword)
         {
-            Server = inServer;
-            Database = inDatabase;
-            Username = inUsername;
-            Password = inPassword;
+            Server = inServer.Trim();
+            Database = inDatabase.Trim();
+            Username = inUsername.Trim();
+            Password = inPassword.Trim();
             _ConnectionString = string.Format("Server={0}; database={1}; UID={2}; password={3}", Server, Database, Username, Password);
         }
         /// <summary>

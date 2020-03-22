@@ -8,32 +8,35 @@ namespace s71Challenge
     {
         static void Main(string[] args)
         {
-            string server = AppConfigManager.GetConfigString("DestinationServer", "localhost");
-            string database = AppConfigManager.GetConfigString("DestinationDatabase", "localhost");
-            string table = AppConfigManager.GetConfigString("DestinationTable", "localhost");
-            string username = "";
-            string password = "";
-            string credentials = AppConfigManager.GetConfigString("DestinationCredentials", "localhost");
-            string[] splitCredentials = credentials.Split(';');
-            username = splitCredentials[0];
-            password = splitCredentials[1];
-            MySqlManager mySqlmanager = new MySqlManager(server, database, username, password);
-            string query = string.Format(@"INSERT INTO {0} (Value) VALUES('abcd')", table);
-            using (MySqlConnection connection = new MySqlConnection(mySqlmanager.GetConnectionString()))
+            QueueContainer queue = new QueueContainer();
+            List<string> insertValues = new List<string> { "a", "b" };
+
+            // To demonstrate values were added: 
+            queue.Push(insertValues);
+            List<string> peekedValues = queue.Peek(2);
+            Console.WriteLine("Queue values:");
+            foreach(string value in peekedValues)
             {
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    try
-                    {
-                        connection.Open();
-                        command.ExecuteNonQuery();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
+                Console.WriteLine(value);
             }
+
+            // To demonstrate pop and peek:
+            queue.Pop(1, 1);
+            peekedValues = queue.Peek(2);
+            Console.WriteLine("\r\nValues peeked from queue:");
+            foreach (string value in peekedValues)
+            {
+                Console.WriteLine(value);
+            }
+
+            // To demonstrate sql insert:
+            MySqlSender mySqlSender = new MySqlSender();
+            foreach(string value in queue.Pop(2))
+            {
+                mySqlSender.InsertToMySql(value);
+            }
+            Console.WriteLine("\r\nDatabase contents:");
+            mySqlSender.WriteDbContentsToConsole();
         }
     }
 }
