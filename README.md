@@ -9,6 +9,8 @@ Hello, I'm Kevin Hewitt and this is my attempt to complete the Studio71 first-in
 > 3. Add additional functionality as needed so that the namespace can be run easily (start up script, examples, etc).
 > 4. While not required, any notes on the development or optimizations you built in to your application would be a plus.
 ## Program Overview
+### Running the program
+The only thing you'll need to set this up (assuming you already have sqlserver ready to go) is to execute my create table script (found [here](https://github.com/Neuron1681/s71Challenge/tree/master/MySQL)) and adjust the App.config file to point at the right direction. Please note that if the table is password protected, the `DestinationCredentials` config item is a `;`-delimited field for a username + password combo: `<username>;<password>`. 
 ### So what's inside the repo?
 In this repo you will find a weekend-engineered c# program attempting to flesh out [the stubbed functions](https://s71.link/aSNHX9) and follow the project requirement listed in the Studio71 email.
 Since the project is independent of test data or use case, I placed some code under the main method to demonstrate the functionality of the required functions as well as the system requirements.
@@ -19,6 +21,4 @@ Since the project is independent of test data or use case, I placed some code un
 * **Multithreading** was something I wanted to do in order to set up the multi-queue. In fact, I actually use a multithreaded multi-queue at my current job. I also believed multithreading was crucial for this requirement: `Messages are hidden for the duration (in sec)`. While threads could have been operating off the queues, another set of threads could have hidden and revealed queue messages. Multithreading would have also introduced some issues due to the nature of C# combined with the project requirements. The native queue library prevents `push`-ing to the front of a queue (technically that would be a constrained linkedlist). I was forced to create a new queue and assign it to the old one. If my program was multithreaded, this could have introduced a race condition.
 * **Confirm()** was an awkward function to fill in thanks to the nature of C# -- it felt like it absolutely belonged to a Clojure program because 1) the method is made redundant with `.Dequeue` in a traditional C# queue and 2) in C# it is also impossible to delete any element from a queue except from the last position in the queue. 
 
-## Running the program
-The only thing you'll need to set this up (assuming you already have sqlserver ready to go) is to execute my create table script (found [here](https://github.com/Neuron1681/s71Challenge/tree/master/MySQL)) and adjust the App.config file to point at the right direction. Please note that if the table is password protected, the `DestinationCredentials` config item is a `;`-delimited field for a username + password combo: `<username>;<password>`
 
